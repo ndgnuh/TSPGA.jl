@@ -1,0 +1,15 @@
+name = "TSPGA"
+uuid = "fe1cecbd-c9e1-4960-a0e7-ccd25b778336"
+authors = ["ndgnuh <ndgnuh@protonmail.com>"]
+version = "0.1.0"
+
+[deps]
+BenchmarkTools = "6e4b80f9-dd63-53aa-95a3-0cdb28fa8baf"
+Evolutionary = "86b6b26d-c046-49b6-aa0b-5f0f74682bd6"
+GraphPlot = "a2cc645c-3eea-5389-862e-a155d0052231"
+LightGraphs = "093fc24a-ae57-5d10-9952-331d41423f4d"
+Pluto = "c3e4b0f8-55cb-11ea-2926-15256bba5781"
+PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
+Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
+SimpleWeightedGraphs = "47aef6b3-ad0c-573a-a1e2-d07658019622"
+SparseArrays = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
