@@ -121,16 +121,14 @@
 \begin{frame}
 	{\ft}{Trao đổi chéo và đột biến}
 	\begin{itemize}
-			| Trọng số đỉnh:
-			| Trao đổi chéo, với input: trạng thái $p_1, p_2$, đồ thị $\mathbf{A}$
+			| Trao đổi chéo (1), với input: trạng thái $p_1, p_2$, đồ thị $\mathbf{A}$
 			\begin{enumerate}
 					| $W$ là trọng số các cạnh trong $p_1$
-					| $m_1, m_2 = \operatorname{rand}(1\colon (n\div4))$
-					| Chọn $m_1, m_2$ cạnh từ $E_1, E_2$ theo trọng số đồ thị $\mathbf{A}$ tăng dần
-					| $V_1, V_2$ là tập đỉnh trong các cạnh được chọn
-					| Ghép $V_1$ với $V_1 \setminus p_2$ thu được trạng thái con $c_1$
-					| Tương tự với $V_2$ và $p_1$ thu được trạng thái con $c_2$
+					| $k$ là số ngẫu nhiên, $k\sim\mathcal{U}_{\left[1,n-1\right]}$
+					| Sắp xếp $p_1$ theo $W$ thu được $p'_1$
+					| Lấy $k$ phần tử đầu của $p'_1$, ghép với $p_2 \setminus p'_1$ thu được con $c_1$
 			\end{enumerate}
+			| Trao đổi chéo (2): sử dụng $p_2$ như hoán vị của $p_1$, thu được con $c_2$.
 		| Đột biến:
 			\begin{equation*}
 			\begin{tikzpicture}
@@ -201,7 +199,9 @@
 					\toprule
 					\textbf{Thao tác} & \textbf{Thời gian} & \textbf{Không gian}
 					\\\midrule\midrule
-					Trao đổi chéo & $O(n)$ & $O(n)$
+					Trao đổi chéo (1) & $O(n^2)$ & $O(n)$
+					\\\midrule
+					Trao đổi chéo (2) & $O(n)$ & $O(n)$
 					\\\midrule
 					Đột biến & $O(1)$ & $O(n)$
 					\\\midrule
@@ -234,7 +234,8 @@
 \begin{frame}{\ft}
 	\framesubtitle{Cải tiến}
 	\begin{itemize}
-		| Ước lượng trực cảm chi phí trong trao đổi chéo
+		| Sử dụng yếu tố ngẫu nhiên \& ước lượng trực cảm chi phí trong trao đổi chéo
+		| Sử dụng hai cách trao đổi chéo
 		| Tỉ lệ trao đổi chéo và đột biết được thay đổi để phù hợp với hàm trao đổi chéo mới
 		| Sử dụng hàm chọn lọc ngẫu nhiên
 		| Thuật toán chạy nhanh và có tính ngẫu nhiên
