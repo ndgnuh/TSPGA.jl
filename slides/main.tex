@@ -1,0 +1,292 @@
+\documentclass[aspectratio=169]{beamer}
+\usepackage[utf8x]{vietnam}
+\usepackage[vietnamese]{babel}
+\usepackage{etoolbox}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric}
+\usepackage{booktabs}
+\usepackage{subcaption}
+
+\AtEndEnvironment{beamer@frameslide}{\vspace{-3em}}
+\newcommand{\argmin}{\operatorname{argmin}}
+\newcommand{\abs}[1]{\left\lvert#1\right\rvert}
+\newcommand{\textabs}[1]{\left\lvert\text{#1}\right\rvert}
+\newcommand{\Image}[1]{%
+	\sbox0{\includegraphics[height=0.65\paperheight]{#1}}%
+	\ifdim\wd0 < \textwidth
+	\includegraphics[height=0.65\paperheight]{#1}%
+	\else
+	\includegraphics[width=\textwidth]{#1}%
+	\fi%
+}
+
+\usetheme{hust}
+\setbeamertemplate{caption}[numbered]
+
+\title{GIẢI BÀI TOÁN NGƯỜI BÁN HÀNG}
+\subtitle{SỬ DỤNG GIẢI THUẬT DI TRUYỀN}
+\author{Nguyễn Đức Hùng--20173520}
+\date{Tháng 7, 2021}
+\titlegraphic{\includegraphics{sami-v2}}
+
+\catcode`| = 13
+\def|{\item}
+
+\begin{document}
+\begin{frame}[plain,noframenumbering]
+	\maketitle
+\end{frame}
+
+\def\ft{Bài toán}
+\begin{frame}{\ft}
+	\begin{figure}
+		\Image{traveling_salesman-Medium-930x620}
+		\caption{Bài toán người đi du lịch (người bán hàng), \textit{hình ảnh chỉ mang tính chất minh hoạ}}
+	\end{figure}
+\end{frame}
+
+\begin{frame}{\ft}{Mô hình hoá}
+	\begin{itemize}
+		| Thành phố $\to$ đỉnh
+		| Đường đi $\to$ cạnh
+		| Chi phí đi qua các thành phố  $\to$ trọng số trên cạnh
+		| Tổng chi phí: 
+			\begin{equation*}
+			f(\text{đường đi}) = \sum {\text{Trọng số các cạnh trên đường đó}}
+			\end{equation*}
+		|[$\implies$] Cần tìm $\argmin{f}$
+	\end{itemize}
+\end{frame}
+
+\def\ft{Giải thuật di truyền}
+
+\begin{frame}
+	{\ft}{Trạng thái}
+	\begin{itemize}
+			| Đồ thị $\to$ ma trận kề cận, e.g.:
+				\begin{equation*}
+					\mathbf{A} = \left[
+						\begin{array}{cccccc}
+						\infty & 12     & 29     & 22     & \cdots \\
+						12     & \infty & 19     & 3      & \cdots \\
+						29     & 19     & \infty & 21     & \cdots \\
+						22     & 3      & 21     & \infty & \cdots \\
+						\vdots & \vdots & \vdots & \vdots & \ddots \\
+						\end{array}
+					\right]_{n\times n}
+				\end{equation*}
+			| Trạng thái $\to$ mảng hoán vị, e.g.:
+			\begin{equation*}
+			\begin{tikzpicture}
+				\draw 
+				++(2em, 0) rectangle +(2em, 2em) node[midway] {$1$}
+				++(2em, 0) rectangle +(2em, 2em) node[midway] {$2$}
+				++(2em, 0) rectangle +(2em, 2em) node[midway] {$3$}
+				++(2em, 0) rectangle +(2em, 2em) node[midway] {$\ldots$}
+				++(2em, 0) rectangle +(2em, 2em) node[midway] {$n$}
+				;
+			\end{tikzpicture}
+			\end{equation*}
+			| Không gian trạng thái: tập tất hoán vị $n$ phần tử mà bắt đầu từ một vị trí nào đó.
+	\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+	{\ft}{Tổng quan}
+	\begin{figure}
+		\Image{ga}
+		\caption{Tổng quan các bước thuật toán}
+	\end{figure}
+	\vspace{-2em}
+\end{frame}
+\begin{frame}
+	{\ft}{Các hàm lượng giá trị}
+	\begin{itemize}
+		| Hàm mục tiêu
+			\begin{equation}
+				f_{\mathbf{A}}(x)=\sum_{i=1}^{n-1}\mathbf{A}_{x[i],x[i+1]}+\mathbf{A}_{x[n],x[1]}
+			\end{equation}
+		| Hàm thích nghi:
+			\begin{equation}
+				g_{\mathbf{A}}(x)= \frac{1}{f_{\mathbf{A}}(x)}
+			\end{equation}
+		| Hàm chọn lọc: 
+			\begin{equation}
+				\Pr\left[x_{i}\text{ selected}\right]=\frac{g_{\mathbf{A}}\left(x_{i}\right)}{\sum_{k=1}^{n}g_{\mathbf{A}}\left(x_{k}\right)}
+			\end{equation}
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	{\ft}{Trao đổi chéo và đột biến}
+	\begin{itemize}
+			| Trọng số đỉnh:
+			| Trao đổi chéo, với input: trạng thái $p_1, p_2$, đồ thị $\mathbf{A}$
+			\begin{enumerate}
+					| $W$ là trọng số các cạnh trong $p_1$
+					| $m_1, m_2 = \operatorname{rand}(1\colon (n\div4))$
+					| Chọn $m_1, m_2$ cạnh từ $E_1, E_2$ theo trọng số đồ thị $\mathbf{A}$ tăng dần
+					| $V_1, V_2$ là tập đỉnh trong các cạnh được chọn
+					| Ghép $V_1$ với $V_1 \setminus p_2$ thu được trạng thái con $c_1$
+					| Tương tự với $V_2$ và $p_1$ thu được trạng thái con $c_2$
+			\end{enumerate}
+		| Đột biến:
+			\begin{equation*}
+			\begin{tikzpicture}
+				\draw 
+				++(2em, 0) rectangle +(2em, 2em) node[midway] {$3$}
+				++(2em, 0) rectangle +(2em, 2em) node[midway] {\textcolor{hustred}{$4$}}
+				++(2em, 0) rectangle +(2em, 2em) node[midway] {$1$}
+				++(2em, 0) rectangle +(2em, 2em) node[midway] {\textcolor{hustred}{$5$}}
+				++(2em, 0) rectangle +(2em, 2em) node[midway] {$2$}
+				;
+			\end{tikzpicture}
+				\raisebox{1ex}{${}\to{}$}
+			\begin{tikzpicture}
+				\draw 
+				++(2em, 0) rectangle +(2em, 2em) node[midway] {$3$}
+				++(2em, 0) rectangle +(2em, 2em) node[midway] {\textcolor{hustred}{$5$}}
+				++(2em, 0) rectangle +(2em, 2em) node[midway] {$1$}
+				++(2em, 0) rectangle +(2em, 2em) node[midway] {\textcolor{hustred}{$4$}}
+				++(2em, 0) rectangle +(2em, 2em) node[midway] {$2$}
+				;
+			\end{tikzpicture}
+			\end{equation*}
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	{\ft}{Các tham số khác}
+	\begin{table}
+		\begin{tabular}{lr}
+			\toprule
+			\textbf{Tham số} & \textbf{Giá trị} 
+			\\
+			\midrule
+			\midrule
+			$\Pr[\text{Trao đổi chéo}]$ & $0.5$
+			\\
+			\midrule
+			$\Pr[\text{Đột biến}]$ & $0.5$
+			\\
+			\midrule
+			Kích cỡ quần thể & (mặc định) $n$
+			\\
+			\midrule
+			Số thế hệ không cải thiện trước khi dừng & $30$
+			\\
+			\midrule
+			Sai lệch coi là không đáng kể & $10^{-32}$
+			\\
+			\midrule
+			Số thế hệ tối đa & $2000$
+			\\
+			\bottomrule
+		\end{tabular}
+		\caption{Các tham số khác trong thuật toán}
+	\end{table}
+\end{frame}
+
+\begin{frame}
+	{\ft}{Độ phức tạp}
+	\begin{itemize}
+			| Tổng quan:
+			\begin{equation}
+				O\left(O\left(\text{chọc lọc}\right)\times\left(O\left(\text{trao đổi chéo}\right)+O\left(\text{đột biến}\right)\right)\right)
+			\end{equation}
+			| Chia nhỏ
+			\begin{table}
+				\begin{tabular}{lrr}
+					\toprule
+					\textbf{Thao tác} & \textbf{Thời gian} & \textbf{Không gian}
+					\\\midrule\midrule
+					Trao đổi chéo & $O(n)$ & $O(n)$
+					\\\midrule
+					Đột biến & $O(1)$ & $O(n)$
+					\\\midrule
+					Lựa chọn & $O(m)$ & $O(m)$
+					\\
+					\bottomrule
+				\end{tabular}
+				\caption{Độ phức tạp theo các quá trình, $n$ là kích thước bài toán, $m$ là kích thước quần thể}
+			\end{table}
+	\end{itemize}
+	\vspace{-2em}
+\end{frame}
+
+\begin{frame}
+	{\ft}{Độ phức tạp}
+	\begin{figure}
+		\begin{subfigure}{0.475\textwidth}
+			\Image{benchmark-time.png}
+			\caption{Thời gian (s)}
+		\end{subfigure}
+		\begin{subfigure}{0.475\textwidth}
+			\Image{benchmark-memory.png}
+			\caption{Không gian (MB)}
+		\end{subfigure}
+		\caption{Ước lượng độ phức tạp, kích thước bài toán $n \in \{50, 100, \ldots, 1000\}$.}
+	\end{figure}
+\end{frame}
+
+
+\begin{frame}{\ft}
+	\framesubtitle{Cải tiến}
+	\begin{itemize}
+		| Ước lượng trực cảm chi phí trong trao đổi chéo
+		| Tỉ lệ trao đổi chéo và đột biết được thay đổi để phù hợp với hàm trao đổi chéo mới
+		| Sử dụng hàm chọn lọc ngẫu nhiên
+		| Thuật toán chạy nhanh và có tính ngẫu nhiên
+			\begin{itemize}
+				|[$\implies$] có thể chạy nhiều lần và lấy KQ tốt nhất
+			\end{itemize}
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Ví dụ}
+	\begin{minipage}{0.5\textwidth}
+		\begin{figure}
+			\begin{tikzpicture}[
+					every node/.style={draw=black,shape=circle,ultra thick}
+				]
+				\node (A) at (0, 4) {$1$};
+				\node (B) at (-2,2) {$2$};
+				\node (C) at (2, 2) {$3$};
+				\node (D) at (0, 0) {$4$};
+				\begin{scope}[
+						every node/.style={draw=none, fill=white, shape=circle},
+						every edge/.style={draw=red, ultra thick}
+					]
+					\path (A) edge node[midway]{$12$} (B);
+					\path (A) edge node[midway]{$14$} (C);
+					\path (A) edge node[near start]{$17$} (D);
+					\path (B) edge node[near start]{$15$} (C);
+					\path (B) edge node[midway]{$18$} (D);
+					\path (C) edge node[midway]{$29$} (D);
+				\end{scope}
+			\end{tikzpicture}
+			\caption{Đồ thị các thành phố và đường đi}
+		\end{figure}
+	\end{minipage}
+	\begin{minipage}{0.475\textwidth}
+		\begin{itemize}
+				| Ma trận biểu diễn
+				\begin{equation}
+					\mathbf{A} = \input{graph2.tex}
+				\end{equation}
+				| Kết quả (với $\textabs{quần thể} = 5$)
+				\begin{align*}
+					TODO: KQ
+				\end{align*}
+		\end{itemize}
+	\end{minipage}
+\end{frame}
+
+\begin{frame}[plain,noframenumbering]{}{}
+	\textbf{\LARGE
+		CẢM ƠN VÌ ĐÃ CHÚ Ý LẮNG NGHE.
+	}
+\end{frame}
+
+\end{document}
