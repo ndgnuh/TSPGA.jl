@@ -169,7 +169,7 @@
 			$\Pr[\text{Đột biến}]$ & $0.5$
 			\\
 			\midrule
-			Kích cỡ quần thể & (mặc định) $n$
+			Kích cỡ quần thể & $\min(n, 100)$
 			\\
 			\midrule
 			Số thế hệ không cải thiện trước khi dừng & $30$
@@ -195,17 +195,17 @@
 			\end{equation}
 			| Chia nhỏ
 			\begin{table}
-				\begin{tabular}{lrr}
+				\begin{tabular}{lrrr}
 					\toprule
-					\textbf{Thao tác} & \textbf{Thời gian} & \textbf{Không gian}
+					\textbf{Thao tác} & \textbf{Thời gian (b)} & \textbf{Thời gian (w)} & \textbf{Không gian}
 					\\\midrule\midrule
-					Trao đổi chéo (1) & $O(n^2)$ & $O(n)$
+					Trao đổi chéo (1) & $\Omega(n\log(n))$ & $O(n^2)$ & $O(n)$
 					\\\midrule
-					Trao đổi chéo (2) & $O(n)$ & $O(n)$
+					Trao đổi chéo (2) & $\Omega(n)$ & $O(n)$ & $O(n)$
 					\\\midrule
-					Đột biến & $O(1)$ & $O(n)$
-					\\\midrule
-					Lựa chọn & $O(m)$ & $O(m)$
+					Đột biến & $\Omega(1)$ & $O(1)$ & $O(n)$
+					\\\midrule        
+					Lựa chọn & $\Omega(m)$ & $O(m)$ & $O(m)$
 					\\
 					\bottomrule
 				\end{tabular}
@@ -226,7 +226,7 @@
 			\Image{benchmark-memory.png}
 			\caption{Không gian (MB)}
 		\end{subfigure}
-		\caption{Ước lượng độ phức tạp, kích thước bài toán $n \in \{50, 100, \ldots, 1000\}$.}
+		\caption{Ước lượng độ phức tạp, kích thước bài toán $n \in \{25, 50, \ldots, 1000\}$.}
 	\end{figure}
 \end{frame}
 
