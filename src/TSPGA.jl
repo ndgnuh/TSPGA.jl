@@ -61,8 +61,7 @@ function TSPCrossover(W::AbstractMatrix{S}) where {S}
     m = n - 1
     function breed(p1::AbstractVector{T}, p2::AbstractVector{T}) where {T<:Integer}
         w = [W[i, j] for (i, j) in p2edge(p1)]
-        sel = sortperm(p1, by=i -> w[i])[1:rand(1:m)]
-        c = p1[sel]
+        c = sort(p1, by=i -> w[i])[1:rand(1:m)]
         append!(c, setdiff(p2, c))
         [c, p1[p2]]
     end
