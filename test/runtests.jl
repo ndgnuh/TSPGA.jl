@@ -32,9 +32,10 @@ end
 end
 
 GC.gc()
+Random.seed!(0)
 let n = 1000,
-	#= g = Examples.generate_random_graph(n, 0.1, 3.0, 0.1) =#
 	g = repeat(Examples.tsp100_examples[1].W, 10, 10)
+	#= g = Examples.generate_random_graph(n, 0.1, 3.0, 0.1) =#
 	@info size(g)
 	bench = (@benchmark solve_tsp($g) samples=2 evals=2 seconds=Inf gctrial=true)
 	display(bench)
